@@ -1,14 +1,16 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { FiSettings, FiArrowLeft } from 'react-icons/fi';
-import { useBookEditor } from '../hooks/useBookEditor';
-import Sidebar from '../components/Sidebar';
-import Editor from '../components/Editor';
-import LanguageTabs from '../components/LanguageTabs';
-import ExportButton from '../components/ExportButton';
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { FiSettings, FiArrowLeft, FiSidebar } from "react-icons/fi";
+import { useBookEditor } from "../hooks/useBookEditor";
+import Sidebar from "../components/Sidebar";
+import Editor from "../components/Editor";
+import LanguageTabs from "../components/LanguageTabs";
+import ExportButton from "../components/ExportButton";
 
 export default function BookEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const {
     project,
@@ -46,14 +48,31 @@ export default function BookEditor() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white border-b border-gray-200 px-4 py-2.5 flex items-center gap-3 flex-shrink-0">
-        <button onClick={() => navigate('/')} className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+        <button
+          onClick={() => navigate("/")}
+          className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+        >
           <FiArrowLeft className="w-5 h-5" />
         </button>
+        <button
+          onClick={() => setSidebarOpen((v) => !v)}
+          className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Toggle sidebar"
+        >
+          <FiSidebar className="w-5 h-5" />
+        </button>
         <div className="flex-1 min-w-0">
-          <h1 className="text-base font-semibold text-gray-900 truncate">{project?.title}</h1>
-          {project?.author && <p className="text-xs text-gray-500">{project.author}</p>}
+          <h1 className="text-base font-semibold text-gray-900 truncate">
+            {project?.title}
+          </h1>
+          {project?.author && (
+            <p className="text-xs text-gray-500">{project.author}</p>
+          )}
         </div>
-        <LanguageTabs selectedLocale={selectedLocale} onChange={setSelectedLocale} />
+        <LanguageTabs
+          selectedLocale={selectedLocale}
+          onChange={setSelectedLocale}
+        />
         {project && (
           <ExportButton
             project={project}
@@ -72,53 +91,55 @@ export default function BookEditor() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          chapters={orderedChapters}
-          sections={orderedSections}
-          selectedChapterId={selectedChapterId}
-          selectedSectionId={selectedSectionId}
-          onSelectChapter={(cid) => { setSelectedChapterId(cid); setSelectedSectionId(null); }}
-          onSelectSection={(cid, sid) => { setSelectedChapterId(cid); setSelectedSectionId(sid); }}
-          onAddChapter={addChapter}
-          onDeleteChapter={(chapter) => {
-            if (!confirm(`Delete chapter "${chapter.title}"?`)) return;
-            deleteChapter(chapter);
-          }}
-          onRenameChapter={renameChapter}
-          onReorderChapters={reorderChapters}
-          onAddSection={addSection}
-          onDeleteSection={(section) => {
-            if (!confirm(`Delete section "${section.title}"?`)) return;
-            deleteSection(section);
-          }}
-          onRenameSection={renameSection}
-          onReorderSections={reorderSections}
-        />
+        {sidebarOpen && (
+          <Sidebar
+            chapters={orderedChapters}
+            sections={orderedSections}
+            selectedChapterId={selectedChapterId}
+            selectedSectionId={selectedSectionId}
+            onSelectChapter={(cid) => {
+              setSelectedChapterId(cid);
+              setSelectedSectionId(null);
+            }}
+            onSelectSection={(cid, sid) => {
+              setSelectedChapterId(cid);
+              setSelectedSectionId(sid);
+            }}
+            onAddChapter={addChapter}
+            onDeleteChapter={(chapter) => {
+              if (!confirm(`Delete chapter "${chapter.title}"?`)) return;
+              deleteChapter(chapter);
+            }}
+            onRenameChapter={renameChapter}
+            onReorderChapters={reorderChapters}
+            onAddSection={addSection}
+            onDeleteSection={(section) => {
+              if (!confirm(`Delete section "${section.title}"?`)) return;
+              deleteSection(section);
+            }}
+            onRenameSection={renameSection}
+            onReorderSections={reorderSections}
+          />
+        )}
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-hidden flex flex-col">
           {selectedChapter ? (
-            <div>
-              <div className="mb-4">
-                <h2 className="text-xl font-bold text-gray-900">
-                  {selectedSection ? selectedSection.title : selectedChapter.title}
-                </h2>
-                {selectedSection && (
-                  <p className="text-sm text-gray-500 mt-0.5">Section of: {selectedChapter.title}</p>
-                )}
-              </div>
-              <Editor
-                key={`${selectedChapterId}-${selectedSectionId}-${selectedLocale}`}
-                content={editorContent}
-                onChange={saveContent}
-              />
-            </div>
+            <Editor
+              key={`${selectedChapterId}-${selectedSectionId}-${selectedLocale}`}
+              content={editorContent}
+              onChange={saveContent}
+            />
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center py-20">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <FiSettings className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-500">Select a chapter</h3>
-              <p className="text-gray-400 mt-1 text-sm">Choose a chapter from the sidebar to start writing.</p>
+              <h3 className="text-lg font-semibold text-gray-500">
+                Select a chapter
+              </h3>
+              <p className="text-gray-400 mt-1 text-sm">
+                Choose a chapter from the sidebar to start writing.
+              </p>
             </div>
           )}
         </div>
@@ -126,4 +147,3 @@ export default function BookEditor() {
     </div>
   );
 }
-
