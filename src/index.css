@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror h1 {
+  @apply text-3xl font-bold mb-4 mt-6;
+}
+
+.ProseMirror h2 {
+  @apply text-2xl font-semibold mb-3 mt-5;
+}
+
+.ProseMirror h3 {
+  @apply text-xl font-medium mb-2 mt-4;
+}
+
+.ProseMirror p {
+  @apply mb-3 leading-relaxed;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4;
+}
+
+.ProseMirror strong {
+  @apply font-bold;
+}
+
+.ProseMirror em {
+  @apply italic;
+}
+
+.ProseMirror u {
+  @apply underline;
+}
+
+.ProseMirror s {
+  @apply line-through;
+}
