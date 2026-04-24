@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiSave } from 'react-icons/fi';
 import Layout from '../components/Layout';
-import { getProject, saveProject } from '../db';
+import { repository } from '../db';
 import type { Project, ProjectConfig } from '../db/types';
 import { DEFAULT_PROJECT_CONFIG } from '../db/types';
 
@@ -21,7 +21,7 @@ export default function ProjectSettings() {
 
   useEffect(() => {
     if (id) {
-      getProject(id).then((p) => {
+      repository.getProject(id).then((p) => {
         setProject(p);
         setConfig(p.config);
         setTitle(p.title);
@@ -35,7 +35,7 @@ export default function ProjectSettings() {
     if (!project) return;
     setSaving(true);
     try {
-      await saveProject({ ...project, title, author, description, config });
+      await repository.saveProject({ ...project, title, author, description, config });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } finally {

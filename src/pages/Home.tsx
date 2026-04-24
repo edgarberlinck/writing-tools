@@ -3,20 +3,18 @@ import { FiPlus, FiBook } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import ProjectCard from '../components/ProjectCard';
 import ProjectForm from '../components/ProjectForm';
-import { useApp } from '../context/AppContext';
-import { deleteProject } from '../db';
+import { useProjects } from '../hooks/useProjects';
 import type { Project } from '../db/types';
 
 export default function Home() {
-  const { projects, loadProjects } = useApp();
+  const { projects, load, remove } = useProjects();
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => { loadProjects(); }, [loadProjects]);
+  useEffect(() => { load(); }, [load]);
 
   const handleDelete = async (project: Project) => {
     if (!confirm(`Delete "${project.title}"? This cannot be undone.`)) return;
-    await deleteProject(project);
-    loadProjects();
+    await remove(project);
   };
 
   return (
@@ -56,9 +54,10 @@ export default function Home() {
         )}
 
         {showForm && (
-          <ProjectForm onClose={() => setShowForm(false)} onSaved={loadProjects} />
+          <ProjectForm onClose={() => setShowForm(false)} onSaved={load} />
         )}
       </div>
     </Layout>
   );
 }
+

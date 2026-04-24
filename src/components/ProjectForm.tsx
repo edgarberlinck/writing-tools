@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
 import type { Project } from '../db/types';
 import { DEFAULT_PROJECT_CONFIG } from '../db/types';
-import { generateId, saveProject } from '../db';
+import { repository } from '../db';
+import { BookRepository } from '../db/repository';
 
 interface Props {
   project?: Project | null;
@@ -33,7 +34,7 @@ export default function ProjectForm({ project, onClose, onSaved }: Props) {
       const doc: Project = project
         ? { ...project, title, author, description, updatedAt: now }
         : {
-            _id: generateId('project'),
+            _id: BookRepository.generateId('project'),
             type: 'project',
             title,
             author,
@@ -43,7 +44,7 @@ export default function ProjectForm({ project, onClose, onSaved }: Props) {
             createdAt: now,
             updatedAt: now,
           };
-      await saveProject(doc);
+      await repository.saveProject(doc);
       onSaved();
       onClose();
     } finally {
