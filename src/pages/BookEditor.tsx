@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiSettings, FiArrowLeft, FiSidebar, FiInfo } from "react-icons/fi";
+import {
+  FiSettings,
+  FiArrowLeft,
+  FiSidebar,
+  FiInfo,
+  FiColumns,
+} from "react-icons/fi";
 import { useBookEditor } from "../hooks/useBookEditor";
 import Sidebar from "../components/Sidebar";
 import Editor from "../components/Editor";
@@ -8,12 +14,15 @@ import MoodboardEditor from "../components/MoodboardEditor";
 import LanguageTabs from "../components/LanguageTabs";
 import ExportButton from "../components/ExportButton";
 import AboutModal from "../components/AboutModal";
+import { SUPPORTED_LOCALES } from "../db/types";
 
 export default function BookEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showAbout, setShowAbout] = useState(false);
+  const [splitLocale, setSplitLocale] = useState<string | null>(null);
+  const splitActive = splitLocale !== null;
 
   const {
     project,
@@ -38,7 +47,29 @@ export default function BookEditor() {
     renameSection,
     reorderSections,
     saveContent,
+    saveContentForLocale,
+    getContentForLocale,
   } = useBookEditor(id);
+
+  // When split activates, default to first locale that isn't selectedLocale
+  const toggleSplit = () => {
+    if (splitActive) {
+      setSplitLocale(null);
+    } else {
+      const other = SUPPORTED_LOCALES.find((l) => l.code !== selectedLocale);
+      setSplitLocale(other?.code ?? "pt-br");
+    }
+  };
+
+  // Keep splitLocale from colliding with selectedLocale
+  useEffect(() => {
+    if (splitActive && splitLocale === selectedLocale) {
+      const other = SUPPORTED_LOCALES.find((l) => l.code !== selectedLocale);
+      setSplitLocale(other?.code ?? null);
+    }
+  }, [selectedLocale, splitLocale, splitActive]);
+
+  const splitContent = splitActive ? getContentForLocale(splitLocale!) : "";
 
   if (loading) {
     return (
@@ -75,11 +106,25 @@ export default function BookEditor() {
             <p className="text-xs text-gray-500">{project.author}</p>
           )}
         </div>
-        {selectedChapter?.chapterType !== "moodboard" && (
+        {selectedChapter?.chapterType !== "moodboard" && !splitActive && (
           <LanguageTabs
             selectedLocale={selectedLocale}
             onChange={setSelectedLocale}
           />
+        )}
+        {selectedChapter?.chapterType !== "moodboard" && (
+          <button
+            onClick={toggleSplit}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
+              splitActive
+                ? "bg-indigo-600 text-white border-indigo-600"
+                : "text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-gray-200"
+            }`}
+            title={splitActive ? "Close split view" : "Split view"}
+          >
+            <FiColumns className="w-4 h-4" />
+            <span>Split</span>
+          </button>
         )}
         {project && (
           <ExportButton
@@ -147,6 +192,51 @@ export default function BookEditor() {
                 content={editorContent}
                 onChange={saveContent}
               />
+            ) : splitActive ? (
+              <div className="flex flex-1 overflow-hidden divide-x divide-gray-200">
+                {/* Left pane */}
+                <div className="flex-1 overflow-hidden flex flex-col min-w-0">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border-b border-gray-200 flex-shrink-0">
+                    <span className="text-xs text-gray-500 font-medium">
+                      Language:
+                    </span>
+                    <LanguageTabs
+                      selectedLocale={selectedLocale}
+                      onChange={(loc) => {
+                        if (loc === splitLocale) return;
+                        setSelectedLocale(loc);
+                      }}
+                    />
+                  </div>
+                  <Editor
+                    key={`${selectedChapterId}-${selectedSectionId}-${selectedLocale}-split-left`}
+                    content={editorContent}
+                    onChange={saveContent}
+                  />
+                </div>
+                {/* Right pane */}
+                <div className="flex-1 overflow-hidden flex flex-col min-w-0">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border-b border-gray-200 flex-shrink-0">
+                    <span className="text-xs text-gray-500 font-medium">
+                      Language:
+                    </span>
+                    <LanguageTabs
+                      selectedLocale={splitLocale!}
+                      onChange={(loc) => {
+                        if (loc === selectedLocale) return;
+                        setSplitLocale(loc);
+                      }}
+                    />
+                  </div>
+                  <Editor
+                    key={`${selectedChapterId}-${selectedSectionId}-${splitLocale}-split-right`}
+                    content={splitContent}
+                    onChange={(html) =>
+                      saveContentForLocale(html, splitLocale!)
+                    }
+                  />
+                </div>
+              </div>
             ) : (
               <Editor
                 key={`${selectedChapterId}-${selectedSectionId}-${selectedLocale}`}
