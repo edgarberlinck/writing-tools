@@ -37,11 +37,11 @@ export default function Editor({ content, onChange }: Props) {
   }, [content, editor]);
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden bg-white border-r border-gray-200">
+    <div className="flex flex-col flex-1 overflow-hidden min-h-0 bg-white border-r border-gray-200">
       <Toolbar editor={editor} />
       <EditorContent
         editor={editor}
-        className="prose prose-sm max-w-none p-6 flex-1 overflow-y-auto focus:outline-none"
+        className="prose prose-sm max-w-none p-6 flex-1 min-h-0 overflow-y-auto focus:outline-none"
       />
     </div>
   );
