@@ -1,9 +1,6 @@
-name: Build Desktop Apps
+name: release
 
 on:
-  push:
-    branches: ["**"]
-    tags: ["v*"]
   workflow_dispatch:
     inputs:
       release_tag:
