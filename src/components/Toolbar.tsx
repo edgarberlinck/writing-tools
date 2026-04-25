@@ -3,6 +3,30 @@ import { FiBold, FiItalic, FiUnderline } from "react-icons/fi";
 import { MdFormatStrikethrough, MdFormatQuote } from "react-icons/md";
 import type { ReactNode } from "react";
 
+const EDITOR_FONTS = [
+  { label: "Default", value: "" },
+  // Serif classics
+  { label: "Georgia", value: "Georgia" },
+  { label: "Times New Roman", value: "Times New Roman" },
+  { label: "Palatino", value: "Palatino" },
+  // Google Serif / Literary
+  { label: "EB Garamond", value: "EB Garamond" },
+  { label: "Crimson Text", value: "Crimson Text" },
+  { label: "Lora", value: "Lora" },
+  { label: "Merriweather", value: "Merriweather" },
+  { label: "Playfair Display", value: "Playfair Display" },
+  { label: "Libre Baskerville", value: "Libre Baskerville" },
+  { label: "IM Fell English", value: "IM Fell English" },
+  // Typewriter
+  { label: "Courier New", value: "Courier New" },
+  { label: "Courier Prime", value: "Courier Prime" },
+  { label: "Special Elite", value: "Special Elite" },
+  // Sans-serif
+  { label: "Arial", value: "Arial" },
+  { label: "Helvetica", value: "Helvetica" },
+  { label: "Raleway", value: "Raleway" },
+];
+
 interface Props {
   editor: Editor | null;
 }
@@ -62,6 +86,32 @@ export default function Toolbar({ editor }: Props) {
         <option value="h2">Subtitle (H2)</option>
         <option value="h3">Section (H3)</option>
         <option value="blockquote">Quotation</option>
+      </select>
+
+      <div className="w-px h-6 bg-gray-200 mx-1" />
+
+      <select
+        className="text-sm border border-gray-300 rounded px-2 py-1 mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        title="Font Family"
+        value={editor.getAttributes("textStyle")?.fontFamily ?? ""}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (val) {
+            editor.chain().focus().setFontFamily(val).run();
+          } else {
+            editor.chain().focus().unsetFontFamily().run();
+          }
+        }}
+      >
+        {EDITOR_FONTS.map((f) => (
+          <option
+            key={f.value}
+            value={f.value}
+            style={{ fontFamily: f.value || "inherit" }}
+          >
+            {f.label}
+          </option>
+        ))}
       </select>
 
       <div className="w-px h-6 bg-gray-200 mx-1" />

@@ -7,13 +7,27 @@ import type { Project, ProjectConfig } from "../db/types";
 import { DEFAULT_PROJECT_CONFIG } from "../db/types";
 
 const FONT_FAMILIES = [
+  // Serif classics
   "Georgia",
   "Times New Roman",
+  "Palatino",
+  "Book Antiqua",
+  // Google Serif / Literary
+  "EB Garamond",
+  "Crimson Text",
+  "Lora",
+  "Merriweather",
+  "Playfair Display",
+  "Libre Baskerville",
+  "IM Fell English",
+  // Typewriter
+  "Courier New",
+  "Courier Prime",
+  "Special Elite",
+  // Sans-serif
   "Arial",
   "Helvetica",
-  "Palatino",
-  "Garamond",
-  "Book Antiqua",
+  "Raleway",
 ];
 
 export default function ProjectSettings() {
