@@ -17,6 +17,7 @@ function createMainWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      additionalArguments: [`--app-version=${pkg.version}`],
     },
   });
 

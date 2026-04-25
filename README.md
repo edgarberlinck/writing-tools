@@ -36,6 +36,8 @@ Whether you're writing your first novel or your tenth, Writing Tools gives you a
 - WYSIWYG editing powered by [TipTap](https://tiptap.dev/)
 - Bold, italic, underline, headings (H1–H3), blockquotes, text alignment
 - Clean reading mode — the editor gets out of your way
+- **Auto-focus**: the editor receives focus automatically when you select a chapter or section
+- **Instant autosave**: every keystroke is saved immediately — no debounce, no risk of losing work if the app closes unexpectedly
 
 ### 🗂️ Chapter & Section Hierarchy
 
@@ -47,6 +49,7 @@ Whether you're writing your first novel or your tenth, Writing Tools gives you a
 
 - Write the same chapter in up to 5 languages: **EN, PT-BR, ES, FR, DE**
 - Each language tab stores independent content — great for translated editions
+- **Split View**: open two languages side by side and edit them simultaneously — perfect for translating or reviewing a localized version while writing
 
 ### 🎨 Moodboard Chapters
 

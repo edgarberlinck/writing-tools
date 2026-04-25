@@ -1,9 +1,11 @@
-const { contextBridge, app } = require("electron");
-const pkg = require("../package.json");
+const { contextBridge } = require("electron");
+
+const version =
+  process.argv.find((a) => a.startsWith("--app-version="))?.split("=")[1] ?? "";
 
 contextBridge.exposeInMainWorld("desktop", {
   platform: process.platform,
   isElectron: true,
-  version: pkg.version,
-  appName: pkg.name,
+  version,
+  appName: "Writing Tools",
 });
