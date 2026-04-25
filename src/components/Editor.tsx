@@ -3,6 +3,8 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+import FontFamily from "@tiptap/extension-font-family";
 import Toolbar from "./Toolbar";
 
 interface Props {
@@ -16,6 +18,8 @@ export default function Editor({ content, onChange }: Props) {
       StarterKit,
       Underline,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
+      TextStyle,
+      FontFamily,
     ],
     content,
     onUpdate: ({ editor }) => {
