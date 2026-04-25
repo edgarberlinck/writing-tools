@@ -75,7 +75,7 @@ export default function BookEditor() {
             <p className="text-xs text-gray-500">{project.author}</p>
           )}
         </div>
-        {selectedChapter?.chapterType !== 'moodboard' && (
+        {selectedChapter?.chapterType !== "moodboard" && (
           <LanguageTabs
             selectedLocale={selectedLocale}
             onChange={setSelectedLocale}
@@ -141,7 +141,7 @@ export default function BookEditor() {
 
         <div className="flex-1 overflow-hidden flex flex-col">
           {selectedChapter ? (
-            selectedChapter.chapterType === 'moodboard' ? (
+            selectedChapter.chapterType === "moodboard" ? (
               <MoodboardEditor
                 key={`${selectedChapterId}-moodboard`}
                 content={editorContent}

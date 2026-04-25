@@ -58,10 +58,32 @@ export default function AboutModal({ isOpen, onClose }: Props) {
             </div>
           )}
 
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-gray-200 space-y-3">
             <p className="text-xs text-gray-500">
               A minimalist writing application for authors. Your stories, your
               way.
+            </p>
+            <p className="text-xs text-gray-500">
+              Made with love by{" "}
+              <a
+                href="https://github.com/edgarberlink"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-600 hover:underline"
+              >
+                @Edgar Muniz Berlinck
+              </a>
+            </p>
+            <p className="text-xs text-gray-500">
+              This app is free, and will always be.{" "}
+              <a
+                href="https://buymeacoffee.com/edgarberlinck"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-yellow-600 hover:underline"
+              >
+                ☕ Buy me a coffee
+              </a>
             </p>
           </div>
         </div>
