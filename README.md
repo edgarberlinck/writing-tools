@@ -197,7 +197,7 @@ MIT — free to use, fork, and modify.
 
 ## 💛 Author
 
-Made with love by [@Edgar Muniz Berlinck](https://github.com/edgarberlink)
+Made with love by [@Edgar Muniz Berlinck](https://github.com/edgarberlinck)
 
 This app is **free, and will always be**. If it helps your writing journey, consider buying me a coffee:
 
