@@ -31,18 +31,21 @@ if (rustcResult.status === 0) {
 // Find tauri in node_modules/.bin  
 const isWindows = process.platform === "win32";
 
-// On Windows, use shell to handle .cmd files. On Unix, call binary directly.
+// On Windows, add node_modules/.bin to PATH
+if (isWindows) {
+  const binPath = path.join(process.cwd(), "node_modules", ".bin");
+  env.PATH = `${binPath};${env.PATH || ""}`;
+}
+
 const spawnOptions = {
   env,
   stdio: "inherit",
   cwd: process.cwd(),
 };
 
+// On Windows, use cmd.exe as shell to handle .cmd files
 if (isWindows) {
-  // Add node_modules/.bin to PATH so shell can find tauri.cmd
-  const binPath = path.join(process.cwd(), "node_modules", ".bin");
-  spawnOptions.env = { ...env, PATH: `${binPath};${env.PATH || ""}` };
-  spawnOptions.shell = true;
+  spawnOptions.shell = "cmd.exe";
 }
 
 const tauriCmd = isWindows ? "tauri" : path.join(process.cwd(), "node_modules", ".bin", "tauri");
