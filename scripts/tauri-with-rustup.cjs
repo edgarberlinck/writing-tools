@@ -34,6 +34,7 @@ const tauriPath = path.join(process.cwd(), "node_modules", ".bin", process.platf
 const child = spawn(tauriPath, tauriArgs, {
   env,
   stdio: "inherit",
+  shell: process.platform === "win32",
 });
 
 child.on("exit", (code, signal) => {
