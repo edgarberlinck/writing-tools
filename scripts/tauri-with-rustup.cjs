@@ -28,12 +28,14 @@ if (rustcResult.status === 0) {
   env.RUSTC = rustcResult.stdout.trim();
 }
 
-// Use npx to run tauri - works better in CI environments
-const tauriBin = process.platform === "win32" ? "npm.cmd" : "npm";
-const args = ["exec", "tauri", "--", ...tauriArgs];
+// Use 'npx tauri' for better CI/CD compatibility
+// npx is available globally in Node installations
+const tauriBin = "npx";
+const args = ["tauri", ...tauriArgs];
 const child = spawn(tauriBin, args, {
   env,
   stdio: "inherit",
+  shell: true,  // Required for cross-platform npx execution
 });
 
 child.on("exit", (code, signal) => {
