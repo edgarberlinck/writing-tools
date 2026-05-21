@@ -43,9 +43,9 @@ const spawnOptions = {
   cwd: process.cwd(),
 };
 
-// On Windows, use cmd.exe as shell to handle .cmd files
+// On Windows, use shell to handle .cmd files
 if (isWindows) {
-  spawnOptions.shell = "cmd.exe";
+  spawnOptions.shell = true;
 }
 
 const tauriCmd = isWindows ? "tauri" : path.join(process.cwd(), "node_modules", ".bin", "tauri");
