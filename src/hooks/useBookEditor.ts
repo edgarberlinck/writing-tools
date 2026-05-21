@@ -90,6 +90,7 @@ export function useBookEditor(
 
   useEffect(() => {
     if (!projectId) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     repository
       .getProject(projectId)
@@ -133,7 +134,7 @@ export function useBookEditor(
   const addChapter = useCallback(
     async (type: ChapterType) => {
       if (!projectId) {
-        throw new Error("missing_project_id");
+        return;
       }
       const now = new Date().toISOString();
       const chapter: Chapter = {

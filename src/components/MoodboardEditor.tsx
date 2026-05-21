@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { FiTrash2, FiDownload, FiUpload } from "react-icons/fi";
 
 interface ImageItem {
@@ -72,10 +72,10 @@ export default function MoodboardEditor({ content, onChange }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Persist to parent on change
-  const saveData = (newData: MoodboardData) => {
+  const saveData = useCallback((newData: MoodboardData) => {
     setData(newData);
     onChange(JSON.stringify(newData));
-  };
+  }, [onChange]);
 
   // Hit detection - check if point is on a stroke
   const getStrokeAtPoint = (
@@ -181,7 +181,7 @@ export default function MoodboardEditor({ content, onChange }: Props) {
   };
 
   // Redraw canvas with images and strokes
-  const redrawCanvas = (strokes: DrawingStroke[]) => {
+  const redrawCanvas = useCallback((strokes: DrawingStroke[]) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -266,11 +266,11 @@ export default function MoodboardEditor({ content, onChange }: Props) {
         });
       }
     });
-  };
+  }, [data, selectedStrokeId, fontSize]);
 
   useEffect(() => {
     redrawCanvas(data.strokes);
-  }, [data, selectedStrokeId]);
+  }, [data, selectedStrokeId, redrawCanvas]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
@@ -509,13 +509,16 @@ export default function MoodboardEditor({ content, onChange }: Props) {
   };
 
   const selectedStrokeIdRef = useRef<string | null>(null);
-  selectedStrokeIdRef.current = selectedStrokeId;
   const dataRef = useRef<MoodboardData>(data);
-  dataRef.current = data;
   const toolRef = useRef<DrawingTool>(tool);
-  toolRef.current = tool;
 
-  const deleteSelectedStroke = () => {
+  useEffect(() => {
+    selectedStrokeIdRef.current = selectedStrokeId;
+    dataRef.current = data;
+    toolRef.current = tool;
+  }, [selectedStrokeId, data, tool]);
+
+  const deleteSelectedStroke = useCallback(() => {
     const id = selectedStrokeIdRef.current;
     if (!id) return;
     const current = dataRef.current;
@@ -525,7 +528,7 @@ export default function MoodboardEditor({ content, onChange }: Props) {
     };
     saveData(newData);
     setSelectedStrokeId(null);
-  };
+  }, [saveData]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -567,7 +570,7 @@ export default function MoodboardEditor({ content, onChange }: Props) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [deleteSelectedStroke]);
 
   const submitText = () => {
     if (!textInput.trim()) {

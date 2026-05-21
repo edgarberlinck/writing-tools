@@ -35,7 +35,7 @@ function createMockDb() {
       store.set(doc._id, { ...doc, _rev: rev });
       return { ok: true, id: doc._id, rev };
     },
-    remove: async (id: string, _rev: string) => {
+    remove: async (id: string) => {
       if (!store.has(id))
         throw Object.assign(new Error("not_found"), { status: 404 });
       store.delete(id);

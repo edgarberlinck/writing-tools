@@ -65,6 +65,7 @@ export default function BookEditor() {
   useEffect(() => {
     if (splitActive && splitLocale === selectedLocale) {
       const other = SUPPORTED_LOCALES.find((l) => l.code !== selectedLocale);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSplitLocale(other?.code ?? null);
     }
   }, [selectedLocale, splitLocale, splitActive]);

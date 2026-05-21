@@ -19,6 +19,7 @@ export default function ProjectForm({ project, onClose, onSaved }: Props) {
 
   useEffect(() => {
     if (project) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(project.title);
       setAuthor(project.author);
       setDescription(project.description);

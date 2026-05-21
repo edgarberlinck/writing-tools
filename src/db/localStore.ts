@@ -46,7 +46,7 @@ export class LocalStore implements PouchLike {
     );
   }
 
-  async allDocs(_options: { include_docs: true }) {
+  async allDocs() {
     return {
       rows: [...this.docs.values()].map((doc) => ({ doc })),
     };
