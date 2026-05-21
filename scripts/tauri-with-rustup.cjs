@@ -36,7 +36,6 @@ const tauriPath = path.join(process.cwd(), "node_modules", ".bin", tauriCmd);
 const child = spawn(tauriPath, tauriArgs, {
   env,
   stdio: "inherit",
-  shell: isWindows,
   cwd: process.cwd(),
 });
 
