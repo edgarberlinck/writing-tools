@@ -33,7 +33,7 @@ const isWindows = process.platform === "win32";
 const tauriCmd = isWindows ? "tauri.cmd" : "tauri";
 const tauriPath = path.join(process.cwd(), "node_modules", ".bin", tauriCmd);
 
-const child = spawn(isWindows ? tauriCmd : tauriPath, tauriArgs, {
+const child = spawn(tauriPath, tauriArgs, {
   env,
   stdio: "inherit",
   shell: isWindows,
