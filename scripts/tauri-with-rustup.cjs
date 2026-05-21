@@ -28,14 +28,13 @@ if (rustcResult.status === 0) {
   env.RUSTC = rustcResult.stdout.trim();
 }
 
-// Use 'npx tauri' for better CI/CD compatibility
-// npx is available globally in Node installations
-const tauriBin = "npx";
-const args = ["tauri", ...tauriArgs];
-const child = spawn(tauriBin, args, {
+// Find tauri in node_modules/.bin
+const path = require("node:path");
+const tauriPath = path.join(process.cwd(), "node_modules", ".bin", process.platform === "win32" ? "tauri.cmd" : "tauri");
+
+const child = spawn(tauriPath, tauriArgs, {
   env,
   stdio: "inherit",
-  shell: true,  // Required for cross-platform npx execution
 });
 
 child.on("exit", (code, signal) => {
