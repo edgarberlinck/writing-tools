@@ -1,8 +1,8 @@
-import type { Project, Chapter, Section } from './types';
-import { generateId } from '../utils/id';
+import type { Project, Chapter, Section } from "./types";
+import { generateId } from "../utils/id";
 
 /**
- * Minimal interface for PouchDB operations used by BookRepository.
+ * Minimal document-store interface used by BookRepository.
  * Defining it here allows easy mocking in tests.
  */
 export interface PouchLike {
@@ -10,14 +10,16 @@ export interface PouchLike {
     rows: Array<{ doc?: Record<string, unknown> }>;
   }>;
   get(id: string): Promise<Record<string, unknown>>;
-  put(doc: Record<string, unknown>): Promise<{ ok: boolean; id: string; rev: string }>;
+  put(
+    doc: Record<string, unknown>,
+  ): Promise<{ ok: boolean; id: string; rev: string }>;
   remove(id: string, rev: string): Promise<{ ok: boolean }>;
 }
 
 /**
  * BookRepository encapsulates all database operations.
  * It accepts any `PouchLike` implementation so tests can inject a mock
- * without touching IndexedDB.
+ * without depending on runtime-specific storage.
  *
  * All write operations are non-mutating: they never modify the caller's
  * object and always return a new document with the updated `_rev`.
@@ -35,7 +37,7 @@ export class BookRepository {
     const result = await this.db.allDocs({ include_docs: true });
     return result.rows
       .map((r) => r.doc as unknown as Project)
-      .filter((doc) => doc?.type === 'project');
+      .filter((doc) => doc?.type === "project");
   }
 
   async getProject(id: string): Promise<Project> {
@@ -43,7 +45,10 @@ export class BookRepository {
   }
 
   async saveProject(data: Project): Promise<Project> {
-    const doc = { ...(data as unknown as Record<string, unknown>), updatedAt: new Date().toISOString() };
+    const doc = {
+      ...(data as unknown as Record<string, unknown>),
+      updatedAt: new Date().toISOString(),
+    };
     const result = await this.db.put(doc);
     return { ...(doc as unknown as Project), _rev: result.rev };
   }
@@ -62,7 +67,7 @@ export class BookRepository {
     const result = await this.db.allDocs({ include_docs: true });
     return result.rows
       .map((r) => r.doc as unknown as Chapter)
-      .filter((doc) => doc?.type === 'chapter' && doc.projectId === projectId);
+      .filter((doc) => doc?.type === "chapter" && doc.projectId === projectId);
   }
 
   async getChapter(id: string): Promise<Chapter> {
@@ -70,7 +75,10 @@ export class BookRepository {
   }
 
   async saveChapter(data: Chapter): Promise<Chapter> {
-    const doc = { ...(data as unknown as Record<string, unknown>), updatedAt: new Date().toISOString() };
+    const doc = {
+      ...(data as unknown as Record<string, unknown>),
+      updatedAt: new Date().toISOString(),
+    };
     const result = await this.db.put(doc);
     return { ...(doc as unknown as Chapter), _rev: result.rev };
   }
@@ -89,7 +97,7 @@ export class BookRepository {
     const result = await this.db.allDocs({ include_docs: true });
     return result.rows
       .map((r) => r.doc as unknown as Section)
-      .filter((doc) => doc?.type === 'section' && doc.chapterId === chapterId);
+      .filter((doc) => doc?.type === "section" && doc.chapterId === chapterId);
   }
 
   async getSection(id: string): Promise<Section> {
@@ -97,7 +105,10 @@ export class BookRepository {
   }
 
   async saveSection(data: Section): Promise<Section> {
-    const doc = { ...(data as unknown as Record<string, unknown>), updatedAt: new Date().toISOString() };
+    const doc = {
+      ...(data as unknown as Record<string, unknown>),
+      updatedAt: new Date().toISOString(),
+    };
     const result = await this.db.put(doc);
     return { ...(doc as unknown as Section), _rev: result.rev };
   }

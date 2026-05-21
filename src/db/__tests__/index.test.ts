@@ -1,25 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const pouchCtor = vi.fn(function MockPouchDB(
-  this: Record<string, unknown>,
-  _name: string,
-) {
-  return {};
-});
-
-vi.mock("pouchdb-browser", () => ({
-  default: pouchCtor,
-}));
+import { beforeEach, describe, expect, it } from "vitest";
 
 describe("db/index", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    if (typeof window !== "undefined") {
+      window.localStorage.clear();
+    }
   });
 
-  it("creates repository singleton with the expected PouchDB name", async () => {
+  it("creates repository singleton", async () => {
     const mod = await import("../index");
 
-    expect(pouchCtor).toHaveBeenCalledWith("writing-tools");
     expect(mod.repository).toBeInstanceOf(mod.BookRepository);
   });
 

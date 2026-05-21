@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { FiX } from "react-icons/fi";
 
 interface Props {
@@ -8,25 +10,45 @@ interface Props {
 declare global {
   interface Window {
     __APP_VERSION__?: string;
-    desktop?: {
-      version?: string;
-      platform?: string;
-      isElectron?: boolean;
-    };
   }
 }
 
+interface DesktopInfo {
+  version: string;
+  platform: string;
+  appName: string;
+  isTauri: boolean;
+}
+
 export default function AboutModal({ isOpen, onClose }: Props) {
+  const [desktopInfo, setDesktopInfo] = useState<DesktopInfo | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    invoke<DesktopInfo>("desktop_info")
+      .then((info) => {
+        if (mounted) {
+          setDesktopInfo(info);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setDesktopInfo(null);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   if (!isOpen) return null;
 
-  const version =
-    (typeof window !== "undefined" && window.__APP_VERSION__) ||
-    (typeof window !== "undefined" && window.desktop?.version) ||
-    "unknown";
+  const version = desktopInfo?.version || window.__APP_VERSION__ || "unknown";
 
-  const isElectron =
-    typeof window !== "undefined" && window.desktop?.isElectron;
-  const platform = typeof window !== "undefined" && window.desktop?.platform;
+  const isDesktopRuntime = Boolean(desktopInfo?.isTauri);
+  const platform = desktopInfo?.platform;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -49,7 +71,7 @@ export default function AboutModal({ isOpen, onClose }: Props) {
             <p className="text-lg font-semibold text-gray-900">{version}</p>
           </div>
 
-          {isElectron && (
+          {isDesktopRuntime && (
             <div>
               <p className="text-sm text-gray-600">Platform</p>
               <p className="text-sm font-medium text-gray-900 capitalize">

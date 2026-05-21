@@ -3,11 +3,11 @@
 
 # Writing Tools
 
-**A free, offline-first desktop app for authors who want to focus on writing — not on tooling.**
+**A free, offline-first desktop app for authors, built with a Rust core and a modern web UI.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
 [![Built with React](https://img.shields.io/badge/Built%20with-React%2019-61dafb?logo=react)](https://react.dev/)
-[![Electron](https://img.shields.io/badge/Desktop-Electron-47848f?logo=electron)](https://www.electronjs.org/)
+[![Tauri](https://img.shields.io/badge/Desktop-Tauri-24C8DB?logo=tauri)](https://tauri.app/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 
 > Write books, organize chapters, plan with moodboards, and export to PDF — all locally, with no account required.
@@ -18,7 +18,7 @@
 
 ## ✨ What is Writing Tools?
 
-Writing Tools is a minimalist book writing application for authors. It runs on **macOS, Windows, and Linux** as a native desktop app (via Electron), and also works entirely in the browser. All your data stays **on your machine** — no cloud sync, no subscriptions, no telemetry.
+Writing Tools is a minimalist book writing application for authors. The desktop app runs on **macOS, Windows, and Linux** with a **Rust backend** (via Tauri), and also works in the browser. All your data stays **on your machine** — no cloud sync, no subscriptions, no telemetry.
 
 Whether you're writing your first novel or your tenth, Writing Tools gives you a clean, distraction-free environment with just the right amount of structure.
 
@@ -73,8 +73,9 @@ Whether you're writing your first novel or your tenth, Writing Tools gives you a
 
 ### 💾 Offline-first Storage
 
-- All data stored locally via [PouchDB](https://pouchdb.com/) (IndexedDB under the hood)
-- No backend, no account, no internet connection required
+- Desktop: local **SQLite** database handled by the Rust core (`rusqlite`)
+- Browser: local storage fallback for web-only usage
+- No account, no internet connection required
 - Your words belong to you
 
 ---
@@ -90,7 +91,7 @@ npm install
 npm run desktop:dev
 ```
 
-This launches the Vite dev server and opens the Electron window simultaneously with hot reload.
+This launches the Vite dev server and opens the Tauri window simultaneously with hot reload.
 
 ---
 
@@ -112,8 +113,10 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ### Prerequisites
 
 - **Node.js** 18+ and **npm**
+- **Rust toolchain** (required by Tauri): install from [rustup.rs](https://rustup.rs/)
+- Platform dependencies for Tauri (WebView + bundling): [official prerequisites](https://tauri.app/start/prerequisites/)
 - macOS is required to build the `.dmg` for Mac
-- Windows (or Wine on macOS/Linux) is required to build the Windows installer
+- Windows is required to build the Windows installer (NSIS)
 
 ### 1. Clone the repository
 
@@ -136,9 +139,9 @@ npm run desktop:build:win
 npm run desktop:build:all
 ```
 
-The release packages will be in the `release/` folder.
+The desktop packages will be generated in `src-tauri/target/release/bundle/`.
 
-> Each desktop build automatically increments the patch version (e.g. `1.0.2` → `1.0.3`).
+> Each desktop build automatically increments the patch version (e.g. `2.0.0` -> `2.0.1`).
 
 ### 3. Web-only build
 
@@ -150,9 +153,9 @@ npm run build
 ### Version management
 
 ```bash
-npm run version:patch   # 1.0.x → 1.0.x+1
-npm run version:minor   # 1.x.0 → 1.x+1.0
-npm run version:major   # x.0.0 → x+1.0.0
+ npm run version:patch   # 2.0.x -> 2.0.x+1
+ npm run version:minor   # 2.x.0 -> 2.x+1.0
+ npm run version:major   # x.0.0 -> x+1.0.0
 ```
 
 ---
@@ -178,9 +181,9 @@ npm run test:e2e
 | ---------------- | -------------------------------------------------------------------------------------------- |
 | UI Framework     | [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)               |
 | Build Tool       | [Vite](https://vitejs.dev/)                                                                  |
-| Desktop Shell    | [Electron](https://www.electronjs.org/)                                                      |
+| Desktop Core     | [Rust](https://www.rust-lang.org/) + [Tauri](https://tauri.app/)                             |
 | Rich Text Editor | [TipTap](https://tiptap.dev/)                                                                |
-| Local Database   | [PouchDB](https://pouchdb.com/) (IndexedDB)                                                  |
+| Local Database   | [SQLite](https://www.sqlite.org/) via [rusqlite](https://github.com/rusqlite/rusqlite)       |
 | Drag & Drop      | [@dnd-kit](https://dndkit.com/)                                                              |
 | Styling          | [Tailwind CSS v3](https://tailwindcss.com/)                                                  |
 | PDF Export       | [jsPDF](https://github.com/parallax/jsPDF) + [html2canvas](https://html2canvas.hertzen.com/) |

@@ -132,7 +132,9 @@ export function useBookEditor(
 
   const addChapter = useCallback(
     async (type: ChapterType) => {
-      if (!projectId || !project) return;
+      if (!projectId) {
+        throw new Error("missing_project_id");
+      }
       const now = new Date().toISOString();
       const chapter: Chapter = {
         _id: BookRepository.generateId("chapter"),
@@ -145,11 +147,38 @@ export function useBookEditor(
         createdAt: now,
         updatedAt: now,
       };
+
       const saved = await repository.saveChapter(chapter);
-      const savedProject = await repository.saveProject({
-        ...project,
-        chapterOrder: [...project.chapterOrder, saved._id],
-      });
+
+      // Use the freshest project snapshot to avoid revision conflicts.
+      const currentProject =
+        (await repository.getProject(projectId).catch(() => null)) ?? project;
+      if (!currentProject) {
+        throw new Error("project_not_found");
+      }
+
+      const nextOrder = currentProject.chapterOrder.includes(saved._id)
+        ? currentProject.chapterOrder
+        : [...currentProject.chapterOrder, saved._id];
+
+      let savedProject: Project;
+      try {
+        savedProject = await repository.saveProject({
+          ...currentProject,
+          chapterOrder: nextOrder,
+        });
+      } catch {
+        // Retry once with a fresh revision when another write won the race.
+        const latest = await repository.getProject(projectId);
+        const latestOrder = latest.chapterOrder.includes(saved._id)
+          ? latest.chapterOrder
+          : [...latest.chapterOrder, saved._id];
+        savedProject = await repository.saveProject({
+          ...latest,
+          chapterOrder: latestOrder,
+        });
+      }
+
       setProject(savedProject);
       await loadChapters(projectId);
       setSelectedChapterId(saved._id);

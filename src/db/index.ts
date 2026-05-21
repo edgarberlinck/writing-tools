@@ -1,10 +1,18 @@
-import PouchDB from 'pouchdb-browser';
-import { BookRepository, type PouchLike } from './repository';
+import { BookRepository, type PouchLike } from "./repository";
+import { LocalStore } from "./localStore";
+import { TauriStore } from "./tauriStore";
+
+function isTauriRuntime() {
+  return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+}
 
 /**
- * Application-wide singleton repository backed by PouchDB (IndexedDB in browser).
- * Import `repository` everywhere in the app instead of using db functions directly.
+ * Application-wide singleton repository.
+ * Desktop runtime: SQLite in appDataDir/data/writing-tools.db via Tauri commands.
+ * Browser runtime: localStorage fallback.
  */
-export const repository = new BookRepository(new PouchDB('writing-tools') as unknown as PouchLike);
+export const repository = new BookRepository(
+  (isTauriRuntime() ? new TauriStore() : new LocalStore()) as PouchLike,
+);
 
-export { BookRepository } from './repository';
+export { BookRepository } from "./repository";
