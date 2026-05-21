@@ -29,7 +29,6 @@ if (rustcResult.status === 0) {
 }
 
 // Find tauri in node_modules/.bin
-const path = require("node:path");
 const tauriPath = path.join(process.cwd(), "node_modules", ".bin", process.platform === "win32" ? "tauri.cmd" : "tauri");
 
 const child = spawn(tauriPath, tauriArgs, {
