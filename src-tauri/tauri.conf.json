@@ -23,6 +23,6 @@
   "bundle": {
     "active": true,
     "targets": ["dmg", "nsis"],
-    "icon": ["../build/icon.ico", "../build/icon.icns"]
+    "icon": ["build/icon.ico", "build/icon.icns"]
   }
 }

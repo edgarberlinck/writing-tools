@@ -28,8 +28,10 @@ if (rustcResult.status === 0) {
   env.RUSTC = rustcResult.stdout.trim();
 }
 
-const tauriBin = process.platform === "win32" ? "tauri.cmd" : "tauri";
-const child = spawn(tauriBin, tauriArgs, {
+// Use npx to run tauri - works better in CI environments
+const tauriBin = process.platform === "win32" ? "npm.cmd" : "npm";
+const args = ["exec", "tauri", "--", ...tauriArgs];
+const child = spawn(tauriBin, args, {
   env,
   stdio: "inherit",
 });
