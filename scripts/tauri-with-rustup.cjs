@@ -28,11 +28,10 @@ if (rustcResult.status === 0) {
   env.RUSTC = rustcResult.stdout.trim();
 }
 
-// Find tauri in node_modules/.bin
+// Find tauri in node_modules/.bin  
 const isWindows = process.platform === "win32";
-const tauriPath = path.join(process.cwd(), "node_modules", ".bin", "tauri");
 
-// On Windows, spawn .cmd files with shell option  
+// On Windows, use shell to handle .cmd files. On Unix, call binary directly.
 const spawnOptions = {
   env,
   stdio: "inherit",
@@ -40,10 +39,14 @@ const spawnOptions = {
 };
 
 if (isWindows) {
+  // Add node_modules/.bin to PATH so shell can find tauri.cmd
+  const binPath = path.join(process.cwd(), "node_modules", ".bin");
+  spawnOptions.env = { ...env, PATH: `${binPath};${env.PATH || ""}` };
   spawnOptions.shell = true;
 }
 
-const child = spawn(isWindows ? `"${tauriPath}.cmd"` : tauriPath, tauriArgs, spawnOptions);
+const tauriCmd = isWindows ? "tauri" : path.join(process.cwd(), "node_modules", ".bin", "tauri");
+const child = spawn(tauriCmd, tauriArgs, spawnOptions);
 
 child.on("exit", (code, signal) => {
   if (typeof code === "number") {
