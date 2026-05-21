@@ -10,7 +10,7 @@
     "desktop:dev": "node scripts/tauri-with-rustup.cjs dev",
     "desktop:build": "node scripts/tauri-with-rustup.cjs build",
     "desktop:build:mac": "npm run version:patch && node scripts/tauri-with-rustup.cjs build --bundles dmg",
-    "desktop:build:win": "npm run version:patch && node scripts/tauri-with-rustup.cjs build --bundles nsis",
+    "desktop:build:win": "npm run version:patch && npx tauri build --bundles nsis",
     "desktop:build:all": "npm run version:patch && node scripts/tauri-with-rustup.cjs build",
     "version:patch": "npm version patch --no-git-tag-version",
     "version:minor": "npm version minor --no-git-tag-version",
