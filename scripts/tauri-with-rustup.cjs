@@ -29,12 +29,15 @@ if (rustcResult.status === 0) {
 }
 
 // Find tauri in node_modules/.bin
-const tauriPath = path.join(process.cwd(), "node_modules", ".bin", process.platform === "win32" ? "tauri.cmd" : "tauri");
+const isWindows = process.platform === "win32";
+const tauriCmd = isWindows ? "tauri.cmd" : "tauri";
+const tauriPath = path.join(process.cwd(), "node_modules", ".bin", tauriCmd);
 
-const child = spawn(tauriPath, tauriArgs, {
+const child = spawn(isWindows ? tauriCmd : tauriPath, tauriArgs, {
   env,
   stdio: "inherit",
-  shell: process.platform === "win32",
+  shell: isWindows,
+  cwd: process.cwd(),
 });
 
 child.on("exit", (code, signal) => {

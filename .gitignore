@@ -1,6 +1,7 @@
 node_modules/
 dist/
 build/
+!build/icon.*
 release/
 *.app/
 .DS_Store
